@@ -1,4 +1,4 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import { Inter, JetBrains_Mono } from "next/font/google";
 import "./globals.css";
 
@@ -6,10 +6,12 @@ const inter = Inter({ subsets: ["latin"], variable: "--font-inter", weight: ["40
 const jbmono = JetBrains_Mono({ subsets: ["latin"], variable: "--font-jbmono", weight: ["400", "500", "600"] });
 
 export const metadata: Metadata = {
-  title: "lakar — the canvas your agent can draw on",
+  title: "Lakar — Prompt it. Watch it draw.",
   description:
-    "lakar is a real design tool your agent drives through code. boards, tokens, components, comments. right beside your terminal.",
+    "Ask your coding agent for a screen. Lakar gives it a real design canvas — boards, tokens, components — and shows you every change live, right beside your terminal.",
 };
+
+export const viewport: Viewport = { themeColor: "#0a0a0a", colorScheme: "dark" };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
