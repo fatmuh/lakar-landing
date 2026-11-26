@@ -1,17 +1,17 @@
 import Image from "next/image";
 import type { ReactNode } from "react";
-import { Icon, Reveal, Section, SectionHead, SectionLabel, TwoTone } from "./ui";
+import { CountUp, Icon, Reveal, Section, SectionHead, SectionLabel, TwoTone } from "./ui";
 
 /* ---------- kepingan kecil yang dipakai beberapa section ---------- */
 
 type Tok = [string, string?];
 
 /** Blok kode mono kecil; tiap baris = deret token [teks, kelas warna]. */
-function Code({ lines, className = "" }: { lines: Tok[][]; className?: string }) {
+function Code({ lines, className = "", typed = false }: { lines: Tok[][]; className?: string; typed?: boolean }) {
   return (
     <pre className={`overflow-x-auto rounded-[10px] border border-line-2 bg-[#0b0b0b] px-[18px] py-4 font-mono text-[12px] leading-[1.75] ${className}`}>
       {lines.map((l, i) => (
-        <div key={i}>
+        <div key={i} className={typed ? "code-line" : undefined} style={typed ? ({ "--i": i } as React.CSSProperties) : undefined}>
           {l.length === 0 ? " " : l.map(([t, c], j) => <span key={j} className={c ?? "text-fg-2"}>{t}</span>)}
         </div>
       ))}
@@ -19,15 +19,17 @@ function Code({ lines, className = "" }: { lines: Tok[][]; className?: string })
   );
 }
 
-function FeatureCard({ title, children, art }: { title: string; children: ReactNode; art: ReactNode }) {
+function FeatureCard({ title, children, art, delay = 0 }: { title: string; children: ReactNode; art: ReactNode; delay?: number }) {
   return (
-    <div className="flex flex-col overflow-hidden rounded-[14px] border border-line bg-card">
+    <Reveal delay={delay} className="h-full" rise={24}>
+    <div className="card-lift flex h-full flex-col overflow-hidden rounded-[14px] border border-line bg-card">
       <div className="flex h-[230px] items-center justify-center overflow-hidden border-b border-line bg-card-2 px-6">{art}</div>
       <div className="flex flex-col gap-2.5 px-6 pt-[22px] pb-[26px]">
         <h3 className="text-[17px] font-semibold">{title}</h3>
         <p className="text-[15px] leading-[1.55] text-fg-2">{children}</p>
       </div>
     </div>
+    </Reveal>
   );
 }
 
@@ -52,8 +54,8 @@ export function PromptIt() {
         Claude Code calls Lakar’s MCP tools and draws on a typed document — boards, auto layout, tokens, components — instead of guessing at HTML.
       </SectionHead>
 
-      <Reveal className="mt-16 flex flex-col gap-5">
-        <div className="scene-sky relative overflow-hidden rounded-[18px] border border-line px-[5%] pt-[2.8%] pb-16 md:pb-[2%]">
+      <div className="mt-16 flex flex-col gap-5">
+        <div className="scroll-scale scene-sky relative overflow-hidden rounded-[18px] border border-line px-[5%] pt-[2.8%] pb-16 md:pb-[2%]">
           <Image
             src="/img/dryrun-review.png"
             alt="Lakar's dry-run review: 12 added, 5 updated, 2 deleted, waiting to be applied"
@@ -62,22 +64,23 @@ export function PromptIt() {
             sizes="(min-width: 1280px) 960px, 90vw"
             className="shadow-window mx-auto w-full max-w-[960px] rounded-xl"
           />
-          <div className="absolute bottom-3 left-1/2 flex h-[54px] w-[min(620px,92%)] -translate-x-1/2 items-center gap-3.5 rounded-[14px] border border-line-2 bg-[#141414ee] pr-2.5 pl-[18px] shadow-[0_16px_40px_#00000099] md:bottom-[30px]">
+          <Reveal delay={200} rise={24} className="absolute bottom-3 left-1/2 flex h-[54px] w-[min(620px,92%)] -translate-x-1/2 items-center gap-3.5 rounded-[14px] border border-line-2 bg-[#141414ee] pr-2.5 pl-[18px] shadow-[0_16px_40px_#00000099] md:bottom-[30px]">
             <span className="size-2 shrink-0 rounded-full bg-agent" />
             <span className="font-mono text-[13px] text-fg">lakar · execute</span>
             <span className="hidden font-mono text-[13px] text-fg-3 sm:inline">dry-run · 23 ops</span>
             <span className="flex-1" />
-            <span className="font-mono text-[13px] text-success">+12</span>
-            <span className="font-mono text-[13px] text-warning">~5</span>
-            <span className="font-mono text-[13px] text-danger">−2</span>
+            <CountUp to={12} prefix="+" className="font-mono text-[13px] text-success" />
+            <CountUp to={5} prefix="~" className="font-mono text-[13px] text-warning" />
+            <CountUp to={2} prefix="−" className="font-mono text-[13px] text-danger" />
             <span className="flex items-center gap-1.5 rounded-lg bg-cta px-2.5 py-1.5 text-[13px] font-medium text-cta-fg">
               Apply <Icon name="enter" className="size-[13px] text-[#52525b]" />
             </span>
-          </div>
+          </Reveal>
         </div>
 
         <div className="grid gap-5 md:grid-cols-3">
           <FeatureCard
+            delay={0}
             title="One call, a whole board"
             art={
               <Code
@@ -94,6 +97,7 @@ export function PromptIt() {
             Agents write small scripts against the document: insert, update, move, delete.
           </FeatureCard>
           <FeatureCard
+            delay={90}
             title="Dry-run first"
             art={
               <div className="flex flex-col gap-2">
@@ -106,6 +110,7 @@ export function PromptIt() {
             Every change lands as a list you review before it touches the file.
           </FeatureCard>
           <FeatureCard
+            delay={180}
             title="Zero config"
             art={
               <Code
@@ -122,16 +127,17 @@ export function PromptIt() {
             One MCP server entry. Claude Code, Codex and any MCP client see the tools.
           </FeatureCard>
         </div>
-      </Reveal>
+      </div>
     </Section>
   );
 }
 
 /* ---------- 02 · See it live ---------- */
 
-function CaptionCard({ src, w, h, alt, lead, children }: { src: string; w: number; h: number; alt: string; lead: string; children: ReactNode }) {
+function CaptionCard({ src, w, h, alt, lead, children, delay = 0 }: { src: string; w: number; h: number; alt: string; lead: string; children: ReactNode; delay?: number }) {
   return (
-    <div className="flex flex-col overflow-hidden rounded-[14px] border border-line bg-card">
+    <Reveal delay={delay} rise={24} className="h-full">
+    <div className="card-lift flex h-full flex-col overflow-hidden rounded-[14px] border border-line bg-card">
       <div className="border-b border-line bg-card-2">
         <Image src={src} alt={alt} width={w} height={h} sizes="(min-width: 1280px) 690px, 100vw" className="h-auto w-full" />
       </div>
@@ -140,6 +146,7 @@ function CaptionCard({ src, w, h, alt, lead, children }: { src: string; w: numbe
         {children}
       </p>
     </div>
+    </Reveal>
   );
 }
 
@@ -149,46 +156,46 @@ export function SeeItLive() {
       <SectionHead num="02" name="See it live" title={<>Watch every change<br className="hidden md:block" /> as it lands</>} lead="The viewer updates while the agent works.">
         Its cursor on the board, every tool call in the feed and what the checks found — no screenshots, no “can you show me?”.
       </SectionHead>
-      <Reveal className="mt-16 grid gap-5 xl:grid-cols-[690fr_490fr]">
+      <div className="mt-16 grid gap-5 xl:grid-cols-[690fr_490fr]">
         <CaptionCard src="/img/presence.png" w={1380} h={800} alt="Claude Code's cursor and label on a card it is adding to the feature grid" lead="Presence on the board.">
           The agent’s cursor and the layer it is editing, in its own color.
         </CaptionCard>
-        <CaptionCard src="/img/activity.png" w={980} h={800} alt="The activity feed: a live Claude Code session and its recent tool calls" lead="Every call in the feed.">
+        <CaptionCard src="/img/activity.png" w={980} h={800} alt="The activity feed: a live Claude Code session and its recent tool calls" lead="Every call in the feed." delay={90}>
           What ran, how long, and what the checks found.
         </CaptionCard>
-      </Reveal>
+      </div>
     </Section>
   );
 }
 
 /* ---------- 03 · Refine it ---------- */
 
-function Msg({ who, initial, tone, note, children }: { who: string; initial: string; tone: string; note?: string; children: ReactNode }) {
+function Msg({ who, initial, tone, note, children, delay = 0 }: { who: string; initial: string; tone: string; note?: string; children: ReactNode; delay?: number }) {
   return (
-    <div className="flex flex-col gap-2.5">
+    <Reveal delay={delay} rise={12} className="flex flex-col gap-2.5">
       <div className="flex items-center gap-2.5">
         <span className={`flex size-6 items-center justify-center rounded-full text-[11px] font-semibold text-white ${tone}`}>{initial}</span>
         <span className="text-[14px] font-semibold">{who}</span>
         {note ? <span className="font-mono text-[11px] text-fg-3">{note}</span> : null}
       </div>
       <p className="text-[16px] leading-[1.6]">{children}</p>
-    </div>
+    </Reveal>
   );
 }
 
-function Diff({ layer, prop, before, after }: { layer: string; prop: string; before: string; after: string }) {
+function Diff({ layer, prop, before, after, delay = 0 }: { layer: string; prop: string; before: string; after: string; delay?: number }) {
   return (
-    <div className="flex flex-wrap items-center gap-4 border-b border-line py-3.5">
+    <Reveal delay={delay} rise={12} className="flex flex-wrap items-center gap-4 border-b border-line py-3.5">
       <div className="flex w-[200px] flex-col gap-1">
         <span className="text-[14px] font-medium">{layer}</span>
         <span className="font-mono text-[12px] text-fg-3">{prop}</span>
       </div>
       <span className="flex items-center gap-2.5 rounded-lg border border-line-2 bg-[#161616] px-2.5 py-[5px] font-mono text-[13px]">
-        <span className="text-fg-3">{before}</span>
+        <span className="diff-before text-fg-3">{before}</span>
         <Icon name="arrowRight" className="size-[13px] text-fg-3" />
-        <span>{after}</span>
+        <span className="diff-after">{after}</span>
       </span>
-    </div>
+    </Reveal>
   );
 }
 
@@ -222,19 +229,19 @@ export function RefineIt() {
       <Reveal className="mt-16">
         <div className="grid grid-cols-[minmax(0,1fr)] items-stretch gap-2 xl:grid-cols-[minmax(0,1fr)_36px_minmax(0,1fr)]">
           <Panel title="On the canvas" meta="3 messages · Hero — Mobile">
-            <Msg who="Maya" initial="M" tone="bg-maya" note="pinned to Visual">This gradient feels cold, and the headline is too big on mobile.</Msg>
-            <Msg who="Claude Code" initial="C" tone="bg-agent">Warming the gradient stops and dropping the mobile headline to 40. I’ll run layout_check after.</Msg>
-            <Msg who="Maya" initial="M" tone="bg-maya">Perfect. Tighten the tracking a little too.</Msg>
+            <Msg who="Maya" initial="M" tone="bg-maya" note="pinned to Visual" delay={0}>This gradient feels cold, and the headline is too big on mobile.</Msg>
+            <Msg who="Claude Code" initial="C" tone="bg-agent" delay={150}>Warming the gradient stops and dropping the mobile headline to 40. I’ll run layout_check after.</Msg>
+            <Msg who="Maya" initial="M" tone="bg-maya" delay={300}>Perfect. Tighten the tracking a little too.</Msg>
           </Panel>
           <div className="hidden items-center justify-center text-fg-3 xl:flex">
             <Icon name="arrowRight" className="size-[18px]" />
           </div>
           <Panel title="In the document" meta="4 changes · rev 43">
             <div>
-              <Diff layer="Visual" prop="fill · stop 1" before="#FF6A3D" after="#FF8552" />
-              <Diff layer="Headline — Mobile" prop="fontSize" before="48" after="40" />
-              <Diff layer="Headline — Mobile" prop="letterSpacing" before="−1" after="−1.5" />
-              <Diff layer="Thread" prop="status" before="open" after="resolved" />
+              <Diff layer="Visual" prop="fill · stop 1" before="#FF6A3D" after="#FF8552" delay={450} />
+              <Diff layer="Headline — Mobile" prop="fontSize" before="48" after="40" delay={600} />
+              <Diff layer="Headline — Mobile" prop="letterSpacing" before="−1" after="−1.5" delay={750} />
+              <Diff layer="Thread" prop="status" before="open" after="resolved" delay={900} />
             </div>
           </Panel>
         </div>
@@ -264,7 +271,7 @@ export function RefineIt() {
             </span>
           ))}
         </div>
-        <div className="scene-dusk overflow-hidden rounded-[18px] border border-line px-[8.3%] pt-[4.2%] pb-[7%]">
+        <div className="scroll-scale scene-dusk overflow-hidden rounded-[18px] border border-line px-[8.3%] pt-[4.2%] pb-[7%]">
           <Image
             src="/img/comments-pins.png"
             alt="The Lakar viewer with a comment pinned on the hero, the agent's reply thread and the design inspector"
@@ -326,6 +333,7 @@ export function ShipIt() {
               </div>
               <div className="p-3.5">
                 <Code
+                  typed
                   className="text-[12.5px]"
                   lines={[
                     [["export function", K], [" HeroDesktop", C], ["() {", P]],
@@ -343,10 +351,10 @@ export function ShipIt() {
                 />
               </div>
             </div>
-            <div className="absolute bottom-[50px] left-1/2 flex h-[50px] max-w-[92%] -translate-x-1/2 items-center gap-3 rounded-full border border-[#333] bg-[#141414e6] pr-[18px] pl-2.5 whitespace-nowrap shadow-[0_14px_36px_#00000099]">
+            <div className="share-pop absolute bottom-[50px] left-1/2 flex h-[50px] max-w-[92%] -translate-x-1/2 items-center gap-3 rounded-full border border-[#333] bg-[#141414e6] pr-[18px] pl-2.5 whitespace-nowrap shadow-[0_14px_36px_#00000099]">
               <span className="flex size-[30px] items-center justify-center rounded-full bg-[#262626]"><Icon name="link" className="size-3.5" /></span>
               <span className="text-[15px] font-medium">Copy share link</span>
-              <span className="hidden font-mono text-[12px] text-fg-3 sm:inline">app.lakar.design/s/Cw7Q2k</span>
+              <span className="hidden font-mono text-[12px] text-fg-3 sm:inline">app.lakar.dev/s/Cw7Q2k</span>
             </div>
           </div>
         </Reveal>

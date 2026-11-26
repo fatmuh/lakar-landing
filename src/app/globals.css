@@ -63,9 +63,65 @@ body { background: var(--color-page); color: var(--color-fg); font-family: var(-
 
 .shadow-window { box-shadow: 0 30px 80px #000000a6; }
 
-/* Reveal saat masuk viewport. */
-.reveal { opacity: 0; transform: translateY(16px); transition: opacity 520ms cubic-bezier(.22,1,.36,1), transform 520ms cubic-bezier(.22,1,.36,1); transition-delay: var(--d, 0ms); }
-.reveal.in { opacity: 1; transform: none; }
+/* ---------- Motion — mengikuti board "Motion spec — landing" di lakar-landing.pen ---------- */
+:root { --ease-out: cubic-bezier(.16,1,.3,1); }
+
+/* Nav: latar + garis muncul setelah scroll > 8px. */
+.nav-shell { transition: background-color 200ms ease-out, border-color 200ms ease-out, backdrop-filter 200ms ease-out; }
+.nav-shell[data-scrolled] { background-color: #0a0a0acc; border-color: var(--color-line); backdrop-filter: blur(12px); }
+
+/* Muat halaman: kata judul hero naik + blur hilang, lalu salinan & tombol. */
+@keyframes rise-blur { from { opacity: 0; transform: translateY(var(--rise, 24px)); filter: blur(var(--blur, 8px)); } to { opacity: 1; transform: none; filter: none; } }
+.load-in { animation: rise-blur var(--dur, 800ms) var(--ease-out) both; animation-delay: var(--d, 0ms); }
+.word { display: inline-block; }
+
+/* Viewer hero: naik + skala saat muat. */
+@keyframes viewer-in { from { opacity: 0; transform: translateY(48px) scale(.94); } to { opacity: 1; transform: none; } }
+.viewer-in { animation: viewer-in 1000ms var(--ease-out) 300ms both; }
+
+/* Reveal saat masuk viewport: naik 20px + blur 6px. */
+.reveal { opacity: 0; transform: translateY(var(--rise, 20px)); filter: blur(6px); transition: opacity 700ms var(--ease-out), transform 700ms var(--ease-out), filter 700ms var(--ease-out); transition-delay: var(--d, 0ms); }
+.reveal.in { opacity: 1; transform: none; filter: none; }
+
+/* Kartu: angkat 4px + garis lebih terang saat hover. */
+.card-lift { transition: transform 160ms ease-out, border-color 160ms ease-out; }
+.card-lift:hover { transform: translateY(-4px); border-color: #3a3a3a; }
+.icon-nudge { transition: transform 200ms var(--ease-out); }
+.group:hover .icon-nudge { transform: translateY(-3px); }
+
+/* Diff 03: nilai "after" mendarat, "before" meredup. */
+.diff-before { transition: opacity 400ms ease-out; transition-delay: calc(var(--d, 0ms) + 250ms); }
+.diff-after { opacity: 0; transition: opacity 400ms ease-out; transition-delay: calc(var(--d, 0ms) + 250ms); }
+.in .diff-before { opacity: .45; }
+.in .diff-after { opacity: 1; }
+
+/* Export code 04: baris kode diketik satu per satu, pill share muncul terakhir. */
+@keyframes type-line { from { opacity: 0; clip-path: inset(0 100% 0 0); } to { opacity: 1; clip-path: inset(0 0 0 0); } }
+.code-line { opacity: 0; }
+.in .code-line { animation: type-line 260ms ease-out both; animation-delay: calc(200ms + var(--i) * 35ms); }
+@keyframes pop { from { opacity: 0; transform: translateY(8px) scale(.9); } to { opacity: 1; transform: none; } }
+.share-pop { opacity: 0; }
+.in .share-pop { animation: pop 420ms var(--ease-out) 750ms both; }
+
+/* Diagram Lakar Cloud: garis share link mengalir. */
+@keyframes dash-flow { to { stroke-dashoffset: -20; } }
+.dash-flow { animation: dash-flow 1.6s linear infinite; }
+
+/* CTA penutup: gelombang bergeser pelan, ikon melayang. */
+@keyframes drift { from { transform: translateX(-3%) scale(1.08); } to { transform: translateX(3%) scale(1.08); } }
+.waves-drift { animation: drift 20s ease-in-out infinite alternate; }
+@keyframes float { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-6px); } }
+.float { animation: float 6s ease-in-out infinite; }
+
+/* Scroll-linked (Chrome/Edge/Safari baru): screenshot scene membesar 0.92 → 1, viewer hero melayang naik. */
+@supports (animation-timeline: view()) {
+  @keyframes scene-in { from { transform: scale(.92); opacity: .4; } to { transform: none; opacity: 1; } }
+  .scroll-scale { animation: scene-in linear both; animation-timeline: view(); animation-range: entry 0% cover 40%; }
+  @keyframes hero-drift { to { transform: translateY(-60px); } }
+  .hero-drift { animation: hero-drift linear both; animation-timeline: view(); animation-range: exit 0% exit 100%; }
+  @keyframes glow-up { to { opacity: 1; } }
+  .hero-glow { opacity: .75; animation: glow-up linear both; animation-timeline: view(); animation-range: exit 0% exit 80%; }
+}
 
 /* Akordeon FAQ: trik grid-rows. */
 .acc { display: grid; grid-template-rows: 0fr; transition: grid-template-rows 260ms cubic-bezier(.2,0,0,1); }
@@ -74,5 +130,9 @@ body { background: var(--color-page); color: var(--color-fg); font-family: var(-
 
 @media (prefers-reduced-motion: reduce) {
   html { scroll-behavior: auto; }
-  .reveal, .acc { transition: none !important; opacity: 1 !important; transform: none !important; }
+  *, *::before, *::after { animation: none !important; }
+  .reveal, .acc, .card-lift, .diff-before, .diff-after, .nav-shell { transition: none !important; }
+  .reveal, .load-in, .viewer-in, .code-line, .share-pop, .diff-after { opacity: 1 !important; transform: none !important; filter: none !important; clip-path: none !important; }
+  .card-lift:hover, .group:hover .icon-nudge { transform: none; }
+  .diff-before { opacity: 1 !important; }
 }

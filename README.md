@@ -11,7 +11,8 @@ Landing page for [Lakar](https://github.com/fatmuh/lakar) — the design canvas 
 - The previous sidealong-style design is kept as `lakar-meta/design/lakar-landing-v1.pen`.
 
 Sections map 1:1 to the frame's children: Nav + hero → 01 Prompt it → 02 See it live → 03 Refine it → 04 Ship it →
-the details → Local-first → FAQ → closing CTA → footer (`src/components/{Hero,Steps,Rest}.tsx`).
+the details → Lakar Cloud → FAQ → closing CTA → footer (`src/components/{Hero,Steps,Rest}.tsx`). Motion follows the
+separate **Motion spec — landing** board in the same file (`previews/landing-motion-dark.png`).
 
 ## Assets
 
@@ -57,4 +58,8 @@ docker run -p 3000:3000 lakar-landing
 
 - The design is desktop-only (1440). Breakpoints: mobile < 768, tablet 768–1279, desktop ≥ 1280; grids collapse to one
   column and headings step down (hero 48 / 84 / 112 px).
-- Motion: reveal-on-scroll and the FAQ accordion; both are disabled under `prefers-reduced-motion`.
+- Motion (see the spec board): word-by-word hero entrance, reveal-on-scroll with blur and stagger, scroll-linked
+  scale on the screenshot scenes and a hero drift (CSS scroll-driven animations, static where unsupported), count-up
+  op bar, cascading thread/diff rows, typed export code, flowing share-link line, drifting waves and a floating icon in
+  the closing CTA. Everything is disabled under `prefers-reduced-motion`.
+- Lakar Cloud model: designs stay on the user's computer; the cloud (app.lakar.dev) only serves share links.

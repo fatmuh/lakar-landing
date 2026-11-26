@@ -6,7 +6,7 @@ export const DOWNLOAD_URL = "https://github.com/fatmuh/lakar/releases/latest";
 export const GITHUB_URL = "https://github.com/fatmuh/lakar";
 
 /** Pembungkus reveal saat masuk viewport (IntersectionObserver). */
-export function Reveal({ children, delay = 0, className = "" }: { children: ReactNode; delay?: number; className?: string }) {
+export function Reveal({ children, delay = 0, rise, className = "" }: { children: ReactNode; delay?: number; rise?: number; className?: string }) {
   const ref = useRef<HTMLDivElement>(null);
   useEffect(() => {
     const el = ref.current;
@@ -24,10 +24,55 @@ export function Reveal({ children, delay = 0, className = "" }: { children: Reac
     return () => io.disconnect();
   }, []);
   return (
-    <div ref={ref} className={`reveal ${className}`} style={{ "--d": `${delay}ms` } as React.CSSProperties}>
+    <div ref={ref} className={`reveal ${className}`} style={{ "--d": `${delay}ms`, ...(rise !== undefined ? { "--rise": `${rise}px` } : {}) } as React.CSSProperties}>
       {children}
     </div>
   );
+}
+
+/** Header nav: data-scrolled setelah scroll > 8px (latar + blur + garis, lihat .nav-shell). */
+export function NavShell({ children }: { children: ReactNode }) {
+  const ref = useRef<HTMLElement>(null);
+  useEffect(() => {
+    const el = ref.current;
+    if (!el) return;
+    const on = () => el.toggleAttribute("data-scrolled", window.scrollY > 8);
+    on();
+    window.addEventListener("scroll", on, { passive: true });
+    return () => window.removeEventListener("scroll", on);
+  }, []);
+  return (
+    <header ref={ref} className="nav-shell sticky top-0 z-40 border-b border-transparent">
+      {children}
+    </header>
+  );
+}
+
+/** Angka yang menghitung naik dari 0 saat terlihat (nilai akhir dirender di server; reduced motion = langsung akhir). */
+export function CountUp({ to, prefix = "", className = "" }: { to: number; prefix?: string; className?: string }) {
+  const ref = useRef<HTMLSpanElement>(null);
+  useEffect(() => {
+    const el = ref.current;
+    if (!el || window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+    const rect = el.getBoundingClientRect();
+    if (rect.top < window.innerHeight) return; // sudah terlihat saat muat: biarkan nilai akhir
+    el.textContent = `${prefix}0`;
+    let raf = 0;
+    const io = new IntersectionObserver(([e]) => {
+      if (!e.isIntersecting) return;
+      io.disconnect();
+      const t0 = performance.now() + 500;
+      const tick = (t: number) => {
+        const p = Math.min(1, Math.max(0, (t - t0) / 600));
+        el.textContent = `${prefix}${Math.round(to * (1 - Math.pow(1 - p, 3)))}`;
+        if (p < 1) raf = requestAnimationFrame(tick);
+      };
+      raf = requestAnimationFrame(tick);
+    }, { threshold: 0.5 });
+    io.observe(el);
+    return () => { io.disconnect(); cancelAnimationFrame(raf); };
+  }, [to, prefix]);
+  return <span ref={ref} className={className}>{`${prefix}${to}`}</span>;
 }
 
 /** Wadah section: lebar isi 1200, padding atas besar seperti aloud. */
@@ -63,10 +108,10 @@ export function SectionHead({ num, name, title, lead, children }: { num: string;
   return (
     <div className="flex flex-col gap-6">
       <Reveal><SectionLabel num={num}>{name}</SectionLabel></Reveal>
-      <Reveal delay={60}>
+      <Reveal delay={70}>
         <h2 className="grad-head max-w-[900px] text-[38px] font-semibold md:text-[52px] xl:text-[60px]">{title}</h2>
       </Reveal>
-      <Reveal delay={120}><TwoTone lead={lead}>{children}</TwoTone></Reveal>
+      <Reveal delay={140}><TwoTone lead={lead}>{children}</TwoTone></Reveal>
     </div>
   );
 }
@@ -105,6 +150,13 @@ const ICONS: Record<string, ReactNode> = {
   enter: <><path d="M20 4v7a4 4 0 0 1-4 4H4" /><path d="m9 10-5 5 5 5" /></>,
   arrowRight: <><path d="M5 12h14" /><path d="m12 5 7 7-7 7" /></>,
   check: <path d="M20 6 9 17l-5-5" />,
+  cloud: <path d="M17.5 19H9a7 7 0 1 1 6.71-9h1.79a4.5 4.5 0 1 1 0 9Z" />,
+  laptop: <><path d="M20 16V7a2 2 0 0 0-2-2H6a2 2 0 0 0-2 2v9m16 0H4m16 0 1.28 2.55a1 1 0 0 1-.9 1.45H3.62a1 1 0 0 1-.9-1.45L4 16" /></>,
+  bot: <><path d="M12 8V4H8" /><rect width="16" height="12" x="4" y="8" rx="2" /><path d="M2 14h2" /><path d="M20 14h2" /><path d="M15 13v2" /><path d="M9 13v2" /></>,
+  plug: <><path d="M12 22v-5" /><path d="M9 8V2" /><path d="M15 8V2" /><path d="M18 8v5a4 4 0 0 1-4 4h-4a4 4 0 0 1-4-4V8Z" /></>,
+  server: <><rect width="20" height="8" x="2" y="2" rx="2" /><rect width="20" height="8" x="2" y="14" rx="2" /><path d="M6 6h.01" /><path d="M6 18h.01" /></>,
+  appWindow: <><rect x="2" y="4" width="20" height="16" rx="2" /><path d="M10 4v4" /><path d="M2 8h20" /><path d="M6 4v4" /></>,
+  hardDrive: <><path d="M22 12H2" /><path d="M5.45 5.11 2 12v6a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2v-6l-3.45-6.89A2 2 0 0 0 16.76 4H7.24a2 2 0 0 0-1.79 1.11z" /><path d="M6 16h.01" /><path d="M10 16h.01" /></>,
   plus: <><path d="M5 12h14" /><path d="M12 5v14" /></>,
   minus: <path d="M5 12h14" />,
   lock: <><rect width="18" height="11" x="3" y="11" rx="2" /><path d="M7 11V7a5 5 0 0 1 10 0v4" /></>,

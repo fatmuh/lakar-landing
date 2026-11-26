@@ -24,58 +24,118 @@ export function Details() {
           And the details,<br className="hidden md:block" /> done properly
         </h2>
       </Reveal>
-      <Reveal delay={80} className="mt-14">
+      <div className="mt-14">
         <div className="grid gap-px border border-line bg-line md:grid-cols-2 xl:grid-cols-3">
-          {DETAILS.map((d) => (
-            <div key={d.title} className="flex flex-col gap-3.5 bg-page px-8 pt-[34px] pb-[38px]">
-              <Icon name={d.icon} className="size-5 text-fg" />
-              <h3 className="text-[17px] font-semibold">{d.title}</h3>
-              <p className="text-[15px] leading-[1.6] text-fg-2">{d.body}</p>
+          {DETAILS.map((d, i) => (
+            <div key={d.title} className="group bg-page">
+              <Reveal delay={i * 50} rise={12} className="flex h-full flex-col gap-3.5 px-8 pt-[34px] pb-[38px]">
+                <Icon name={d.icon} className="icon-nudge size-5 text-fg" />
+                <h3 className="text-[17px] font-semibold">{d.title}</h3>
+                <p className="text-[15px] leading-[1.6] text-fg-2">{d.body}</p>
+              </Reveal>
             </div>
           ))}
         </div>
-      </Reveal>
+      </div>
     </Section>
   );
 }
 
-/* ---------- Local-first ---------- */
+/* ---------- Lakar Cloud: lokal secara default, cloud hanya untuk share link ---------- */
 
-export function LocalFirst() {
+function Node({ icon, title, sub, delay }: { icon: Parameters<typeof Icon>[0]["name"]; title: string; sub: string; delay: number }) {
   return (
-    <Section id="local-first" className="xl:pt-[180px]">
-      <div className="grid gap-10 xl:grid-cols-[540px_1fr] xl:gap-20">
-        <Reveal className="flex flex-col gap-[22px]">
-          <p className="flex items-center gap-2 font-mono text-[13px] text-fg-3">
-            <Icon name="lock" className="size-3.5" /> Local-first
-          </p>
-          <h2 className="grad-head text-[38px] font-semibold md:text-[52px] xl:text-[60px]">
-            Your designs stay<br className="hidden md:block" /> on your machine
-          </h2>
-        </Reveal>
-        <Reveal delay={80} className="flex flex-col gap-8">
-          <TwoTone lead="Files, rendering and the viewer all run on this computer.">
-            lakard listens on 127.0.0.1 only and serves the viewer from the same loopback port. You sign in once at first launch; your work only goes
-            online when you share a link or open a room.
+    <Reveal delay={delay} rise={12} className="min-w-0 flex-1">
+      <div className="flex h-full flex-col gap-2 rounded-xl border border-line-2 bg-card p-[18px]">
+        <Icon name={icon} className="size-[18px] text-fg" />
+        <span className="text-[15px] font-semibold">{title}</span>
+        <span className="text-[13px] text-fg-3">{sub}</span>
+      </div>
+    </Reveal>
+  );
+}
+
+function FlowArrow() {
+  return <Icon name="arrowRight" className="size-4 shrink-0 rotate-90 text-fg-3 md:rotate-0" />;
+}
+
+export function Cloud() {
+  return (
+    <Section id="cloud" className="xl:pt-[180px]">
+      <div className="grid items-end gap-10 xl:grid-cols-[660px_1fr] xl:gap-20">
+        <div className="flex flex-col gap-[22px]">
+          <Reveal>
+            <p className="flex items-center gap-2 font-mono text-[13px] text-fg-3">
+              <Icon name="cloud" className="size-3.5" /> Lakar Cloud
+            </p>
+          </Reveal>
+          <Reveal delay={70}>
+            <h2 className="grad-head text-[38px] font-semibold md:text-[52px] xl:text-[60px]">
+              Local by default,<br className="hidden md:block" /> cloud when you share
+            </h2>
+          </Reveal>
+        </div>
+        <Reveal delay={140}>
+          <TwoTone lead="Every design lives on your computer.">
+            Files, rendering and the viewer all run locally — nothing syncs in the background. Lakar Cloud only comes in when you send a share link: a
+            snapshot goes up, your working files stay put.
           </TwoTone>
-          <hr className="border-line" />
-          <dl className="grid gap-8 sm:grid-cols-3">
-            {[
-              ["127.0.0.1", "the only address lakard listens on"],
-              [".pen", "plain JSON on your disk, in your repo"],
-              ["Opt-in", "share links and live rooms, per design"],
-            ].map(([v, l]) => (
-              <div key={v} className="flex flex-col gap-1.5">
-                <dt className="text-[34px] font-semibold tracking-[-1.2px]">{v}</dt>
-                <dd className="text-[14px] leading-[1.5] text-fg-3">{l}</dd>
-              </div>
-            ))}
-          </dl>
-          <a href="#faq" className="flex w-fit items-center gap-2 text-[15px] font-medium hover:underline">
-            How Lakar stays local <Icon name="arrowRight" className="size-[15px]" />
-          </a>
         </Reveal>
       </div>
+
+      <div className="mt-14 flex flex-col items-stretch gap-4 xl:flex-row xl:items-center xl:gap-0">
+        <div className="flex flex-col gap-[18px] rounded-[18px] border border-dashed border-line-2 p-6 xl:flex-1">
+          <p className="flex items-center gap-2 font-mono text-[12px] text-fg-3"><Icon name="laptop" className="size-3.5" /> Your computer</p>
+          <div className="flex flex-col items-stretch gap-2 md:flex-row md:items-center">
+            <Node icon="bot" title="Your agent" sub="Claude Code · Codex" delay={0} />
+            <FlowArrow />
+            <Node icon="plug" title="lakar mcp" sub="stdio" delay={120} />
+            <FlowArrow />
+            <Node icon="server" title="lakard" sub="renders locally" delay={240} />
+            <FlowArrow />
+            <Node icon="appWindow" title="Viewer" sub="desktop or browser" delay={360} />
+          </div>
+          <Reveal delay={480} rise={8}>
+            <p className="flex w-fit items-center gap-2 rounded-[10px] border border-line-2 bg-card px-3.5 py-2.5 text-[13px] text-fg-2">
+              <Icon name="hardDrive" className="size-3.5" /> Your .pen files — on disk, in your repo
+            </p>
+          </Reveal>
+        </div>
+
+        <Reveal delay={560} rise={8} className="flex flex-col items-center gap-2.5 px-2 xl:w-[124px]">
+          <span className="font-mono text-[12px] text-fg-2">share link</span>
+          <svg viewBox="0 0 110 12" className="h-3 w-[110px] rotate-90 xl:rotate-0" aria-hidden>
+            <path d="M0 6 H100" stroke="#5b93ec" strokeWidth="1.5" strokeDasharray="5 5" className="dash-flow" fill="none" />
+            <path d="m98 1.5 5 4.5-5 4.5" stroke="#5b93ec" strokeWidth="1.5" fill="none" strokeLinecap="round" strokeLinejoin="round" />
+          </svg>
+        </Reveal>
+
+        <Reveal delay={680} rise={12} className="xl:w-[320px]">
+          <div
+            className="flex flex-col gap-3.5 rounded-[18px] border border-[#2f6bea80] p-[22px]"
+            style={{ background: "radial-gradient(70% 45% at 50% 0%, #2563eb40, #2563eb00), var(--color-card)" }}
+          >
+            <p className="flex items-center gap-2.5 text-[15px] font-semibold"><Icon name="cloud" className="size-[18px] text-[#7fb2ff]" /> Lakar Cloud</p>
+            <p className="flex items-center gap-2 rounded-[9px] border border-line-2 bg-[#0b0b0b] px-3 py-2.5 font-mono text-[12px]">
+              <Icon name="link" className="size-[13px] text-fg-2" /> app.lakar.dev/s/Cw7Q2k
+            </p>
+            <p className="text-[13px] leading-[1.5] text-fg-2">A view-only snapshot. Anyone with the link can open it — no account needed.</p>
+          </div>
+        </Reveal>
+      </div>
+
+      <dl className="mt-14 grid gap-8 border-t border-line pt-8 sm:grid-cols-3">
+        {[
+          ["Local", "designs, rendering and the viewer run on your computer"],
+          ["1 link", "the only thing that leaves — a snapshot you choose to share"],
+          ["No account", "needed to open a share link in the browser"],
+        ].map(([v, l], i) => (
+          <Reveal key={v} delay={i * 90} rise={16} className="flex flex-col gap-1.5">
+            <dt className="text-[34px] font-semibold tracking-[-1.2px]">{v}</dt>
+            <dd className="text-[14px] leading-[1.5] text-fg-3">{l}</dd>
+          </Reveal>
+        ))}
+      </dl>
     </Section>
   );
 }
@@ -91,8 +151,8 @@ const QA: { q: string; a: ReactNode }[] = [
     q: "Do I need an account?",
     a: (
       <>
-        Yes — you sign in once when the app first opens, with Google, GitHub or an email link. It powers share links and live rooms; your .pen files
-        stay on your disk either way. Self-hosting lakard with <code className="font-mono text-[14px]">LAKAR_CLOUD_URL=off</code> skips sign-in entirely.
+        A Lakar Cloud account, created once when the app first opens — Google, GitHub or an email link. It is what share links run on; your designs
+        stay on your computer either way.
       </>
     ),
   },
@@ -105,7 +165,7 @@ const QA: { q: string; a: ReactNode }[] = [
       </>
     ),
   },
-  { q: "Does it work offline?", a: "After the first sign-in, yes. Files, rendering and the viewer all run on 127.0.0.1; only share links and live rooms go online." },
+  { q: "Does it work offline?", a: "After the first sign-in, yes. Designing, rendering and the viewer all run on your computer; only share links need the internet." },
   {
     q: "What can the agent actually do?",
     a: "Draw and restructure boards, edit tokens and components, read and answer comments, export code, and check its own work against the real render with layout_check.",
@@ -120,7 +180,7 @@ const QA: { q: string; a: ReactNode }[] = [
   },
   {
     q: "Is it open source?",
-    a: "The desktop app, the lakard daemon and the MCP server are MIT-licensed on GitHub. Lakar Cloud, which runs share links and rooms, is a separate hosted service.",
+    a: "The desktop app, the lakard daemon and the MCP server are MIT-licensed on GitHub. Lakar Cloud, which runs share links, is a separate hosted service.",
   },
 ];
 
@@ -180,7 +240,9 @@ export function Faq() {
 export function Closing() {
   return (
     <section id="download" className="relative overflow-hidden border-t border-line">
-      <Image src="/img/waves.svg" alt="" fill sizes="100vw" className="pointer-events-none object-cover" aria-hidden />
+      <div className="waves-drift pointer-events-none absolute inset-0" aria-hidden>
+        <Image src="/img/waves.svg" alt="" fill sizes="100vw" className="object-cover" />
+      </div>
       <div
         className="pointer-events-none absolute inset-0"
         style={{
@@ -189,7 +251,7 @@ export function Closing() {
         }}
       />
       <Reveal className="relative mx-auto flex max-w-[900px] flex-col items-center gap-[26px] px-5 pt-28 pb-28 text-center md:pt-[150px] md:pb-[150px]">
-        <Image src="/img/app-icon.png" alt="Lakar app icon" width={104} height={104} className="drop-shadow-[0_12px_40px_#2563eb59]" />
+        <Image src="/img/app-icon.png" alt="Lakar app icon" width={104} height={104} className="float drop-shadow-[0_12px_40px_#2563eb59]" />
         <h2 className="grad-head text-[40px] font-semibold md:text-[60px] xl:text-[72px]">Next time, just prompt it</h2>
         <p className="text-[17px] text-fg-2 md:text-[18px]">Free for macOS, Windows and Linux.</p>
         <Pill href={DOWNLOAD_URL} primary icon={<Icon name="download" />}>Download for Mac</Pill>
@@ -202,9 +264,9 @@ export function Closing() {
 /* ---------- Footer ---------- */
 
 const COLS: { title: string; links: [string, string][] }[] = [
-  { title: "Lakar", links: [["How it works", "#how-it-works"], ["Local-first", "#local-first"], ["FAQ", "#faq"], ["Download", DOWNLOAD_URL]] },
+  { title: "Lakar", links: [["How it works", "#how-it-works"], ["Lakar Cloud", "#cloud"], ["FAQ", "#faq"], ["Download", DOWNLOAD_URL]] },
   { title: "Developers", links: [["GitHub", GITHUB_URL], ["Docs", `${GITHUB_URL}#readme`], ["MCP setup", "#faq"], ["Changelog", `${GITHUB_URL}/releases`]] },
-  { title: "More", links: [["Releases on GitHub", `${GITHUB_URL}/releases`], ["Privacy", "#local-first"], ["Terms", `${GITHUB_URL}/blob/main/LICENSE`]] },
+  { title: "More", links: [["Releases on GitHub", `${GITHUB_URL}/releases`], ["Privacy", "#cloud"], ["Terms", `${GITHUB_URL}/blob/main/LICENSE`]] },
 ];
 
 export function Footer() {

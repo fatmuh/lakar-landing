@@ -1,6 +1,6 @@
 import { Hero, Nav } from "@/components/Hero";
 import { PromptIt, RefineIt, SeeItLive, ShipIt } from "@/components/Steps";
-import { Closing, Details, Faq, Footer, LocalFirst } from "@/components/Rest";
+import { Closing, Cloud, Details, Faq, Footer } from "@/components/Rest";
 
 // Urutan section mengikuti frame "Lakar landing v2 — desktop" di lakar-meta/design/lakar-landing.pen.
 export default function Page() {
@@ -14,7 +14,7 @@ export default function Page() {
         <RefineIt />
         <ShipIt />
         <Details />
-        <LocalFirst />
+        <Cloud />
         <Faq />
         <Closing />
       </main>
