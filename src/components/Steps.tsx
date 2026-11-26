@@ -43,6 +43,32 @@ function Count({ sign, n, label, tone }: { sign: string; n: string; label: strin
   );
 }
 
+/** Mock "Install in an agent" (Settings → Connections di app Lakar). */
+function InstallList() {
+  const rows: [string, "installed" | "Install" | "Copy config"][] = [
+    ["Claude Code", "installed"],
+    ["Codex", "Install"],
+    ["OpenCode", "Install"],
+    ["Other MCP client", "Copy config"],
+  ];
+  return (
+    <div className="w-full max-w-[290px] rounded-[10px] border border-line-2 bg-[#0b0b0b] px-1 pt-2.5 pb-1">
+      <p className="px-2.5 pb-2 font-mono text-[11px] text-fg-3">Settings → Connections</p>
+      {rows.map(([name, state]) => (
+        <div key={name} className="flex h-[34px] items-center border-t border-line px-2.5 text-[13px] font-medium">
+          {name}
+          <span className="flex-1" />
+          {state === "installed" ? (
+            <span className="flex items-center gap-1.5 text-[12px] text-fg-2"><Icon name="check" className="size-[13px] text-success" /> Installed</span>
+          ) : (
+            <span className={`rounded-[7px] px-2.5 py-1 text-[12px] ${state === "Install" ? "bg-cta text-cta-fg" : "border border-line-2"}`}>{state}</span>
+          )}
+        </div>
+      ))}
+    </div>
+  );
+}
+
 const K = "text-code-k", S = "text-code-s", N = "text-code-n", C = "text-code-c", P = "text-fg-2", T = "text-code-t";
 
 /* ---------- 01 · Prompt it ---------- */
@@ -109,22 +135,8 @@ export function PromptIt() {
           >
             Every change lands as a list you review before it touches the file.
           </FeatureCard>
-          <FeatureCard
-            delay={180}
-            title="Zero config"
-            art={
-              <Code
-                lines={[
-                  [["{ ", P], ['"mcpServers"', K], [": {", P]],
-                  [['  "lakar"', S], [": {", P]],
-                  [['    "command"', K], [": ", P], ['"npx"', S], [",", P]],
-                  [['    "args"', K], [": [", P], ['"lakar"', S], [", ", P], ['"mcp"', S], ["]", P]],
-                  [["} }", P]],
-                ]}
-              />
-            }
-          >
-            One MCP server entry. Claude Code, Codex and any MCP client see the tools.
+          <FeatureCard delay={180} title="Install in one click" art={<InstallList />}>
+            Settings → Connections → Install in an agent. No config files to edit.
           </FeatureCard>
         </div>
       </div>

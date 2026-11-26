@@ -63,3 +63,9 @@ docker run -p 3000:3000 lakar-landing
   op bar, cascading thread/diff rows, typed export code, flowing share-link line, drifting waves and a floating icon in
   the closing CTA. Everything is disabled under `prefers-reduced-motion`.
 - Lakar Cloud model: designs stay on the user's computer; the cloud (app.lakar.dev) only serves share links.
+- Downloads (`src/lib/release.ts`, `src/components/Download.tsx`, design board **Download — states**): the server reads the
+  Tauri updater feeds — Stable from `releases/latest/download/latest.json` (revalidated hourly), Nightly from the
+  `nightly-feed` branch (every 10 minutes, since old nightlies are deleted). Installer names follow `release.yml`
+  (nightly has no MSI). The button follows the visitor's OS (macOS → Apple silicon .dmg, Windows → -setup.exe,
+  Linux → .AppImage); the Stable/Nightly choice is kept in `localStorage`. If a feed fails, links fall back to the
+  GitHub releases page.

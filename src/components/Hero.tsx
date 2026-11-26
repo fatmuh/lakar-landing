@@ -1,8 +1,10 @@
 import Image from "next/image";
 import { Mark } from "./Mark";
-import { DOWNLOAD_URL, Icon, NavShell, Pill } from "./ui";
+import { DownloadButton, DownloadMeta } from "./Download";
+import { GITHUB_URL, Icon, NavShell, Pill } from "./ui";
 
-export function Nav() {
+/** Star ditampilkan mulai 10 — di bawah itu angka kecil terlihat seperti kekurangan, bukan bukti sosial. */
+export function Nav({ stars }: { stars: number | null }) {
   return (
     <NavShell>
       <nav className="mx-auto flex h-16 w-full max-w-[1280px] items-center gap-7 px-5 md:px-10" aria-label="Main">
@@ -15,10 +17,17 @@ export function Nav() {
           <a href="#how-it-works" className="transition-colors hover:text-fg">How it works</a>
           <a href="#cloud" className="transition-colors hover:text-fg">Lakar Cloud</a>
           <a href="#faq" className="transition-colors hover:text-fg">FAQ</a>
+          <a href={GITHUB_URL} className="flex items-center gap-1.5 transition-colors hover:text-fg">
+            GitHub
+            {stars !== null && stars >= 10 ? (
+              <span className="flex items-center gap-1 text-fg-3">
+                <Icon name="star" className="size-3" />
+                {Intl.NumberFormat("en", { notation: "compact" }).format(stars)}
+              </span>
+            ) : null}
+          </a>
         </div>
-        <Pill href={DOWNLOAD_URL} primary size="sm" icon={<Icon name="download" className="size-3.5" />}>
-          Download
-        </Pill>
+        <DownloadButton short size="sm" />
       </nav>
     </NavShell>
   );
@@ -48,12 +57,12 @@ export function Hero() {
           beside your terminal.
         </p>
         <div className="load-in flex flex-col items-center gap-3 pt-3.5 sm:flex-row" style={{ "--d": `${after + 80}ms`, "--rise": "16px", "--dur": "600ms" } as React.CSSProperties}>
-          <Pill href={DOWNLOAD_URL} primary icon={<Icon name="download" />}>Download for Mac</Pill>
+          <DownloadButton />
           <Pill href="#how-it-works" icon={<Icon name="play" className="size-3.5" />}>Watch it draw</Pill>
         </div>
-        <p className="load-in font-mono text-[12px] text-fg-3 md:text-[13px]" style={{ "--d": `${after + 160}ms`, "--rise": "16px", "--dur": "600ms" } as React.CSSProperties}>
-          Free&nbsp;&nbsp;·&nbsp;&nbsp;macOS&nbsp;&nbsp;·&nbsp;&nbsp;Windows&nbsp;&nbsp;·&nbsp;&nbsp;Linux&nbsp;&nbsp;·&nbsp;&nbsp;npx lakar mcp
-        </p>
+        <div className="load-in relative z-20" style={{ "--d": `${after + 160}ms`, "--rise": "16px", "--dur": "600ms" } as React.CSSProperties}>
+          <DownloadMeta />
+        </div>
       </div>
 
       {/* Scene hero: viewer di atas cahaya biru brand; saat di-scroll viewer melayang naik dan cahaya menguat. */}

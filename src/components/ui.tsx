@@ -2,8 +2,7 @@
 
 import { useEffect, useRef, type ReactNode } from "react";
 
-export const DOWNLOAD_URL = "https://github.com/fatmuh/lakar/releases/latest";
-export const GITHUB_URL = "https://github.com/fatmuh/lakar";
+export { GITHUB_URL } from "@/lib/release";
 
 /** Pembungkus reveal saat masuk viewport (IntersectionObserver). */
 export function Reveal({ children, delay = 0, rise, className = "" }: { children: ReactNode; delay?: number; rise?: number; className?: string }) {
@@ -150,6 +149,11 @@ const ICONS: Record<string, ReactNode> = {
   enter: <><path d="M20 4v7a4 4 0 0 1-4 4H4" /><path d="m9 10-5 5 5 5" /></>,
   arrowRight: <><path d="M5 12h14" /><path d="m12 5 7 7-7 7" /></>,
   check: <path d="M20 6 9 17l-5-5" />,
+  chevronDown: <path d="m6 9 6 6 6-6" />,
+  arrowUpRight: <><path d="M7 7h10v10" /><path d="M7 17 17 7" /></>,
+  fileCheck: <><path d="M15 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7Z" /><path d="M14 2v4a2 2 0 0 0 2 2h4" /><path d="m9 15 2 2 4-4" /></>,
+  triangleAlert: <><path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3" /><path d="M12 9v4" /><path d="M12 17h.01" /></>,
+  star: <path d="M11.5 2.3a.6.6 0 0 1 1 0l2.4 4.9 5.4.8a.6.6 0 0 1 .3 1l-3.9 3.8.9 5.4a.6.6 0 0 1-.8.6L12 16.3l-4.8 2.5a.6.6 0 0 1-.8-.6l.9-5.4L3.4 9a.6.6 0 0 1 .3-1l5.4-.8z" />,
   cloud: <path d="M17.5 19H9a7 7 0 1 1 6.71-9h1.79a4.5 4.5 0 1 1 0 9Z" />,
   laptop: <><path d="M20 16V7a2 2 0 0 0-2-2H6a2 2 0 0 0-2 2v9m16 0H4m16 0 1.28 2.55a1 1 0 0 1-.9 1.45H3.62a1 1 0 0 1-.9-1.45L4 16" /></>,
   bot: <><path d="M12 8V4H8" /><rect width="16" height="12" x="4" y="8" rx="2" /><path d="M2 14h2" /><path d="M20 14h2" /><path d="M15 13v2" /><path d="M9 13v2" /></>,

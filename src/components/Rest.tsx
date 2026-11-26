@@ -3,7 +3,9 @@
 import Image from "next/image";
 import { useState, type ReactNode } from "react";
 import { Mark } from "./Mark";
-import { DOWNLOAD_URL, GITHUB_URL, Icon, Pill, Reveal, Section, TwoTone } from "./ui";
+import { NIGHTLY_RELEASES_URL, RELEASES_URL } from "@/lib/release";
+import { DownloadButton, DownloadMeta } from "./Download";
+import { GITHUB_URL, Icon, Reveal, Section, TwoTone } from "./ui";
 
 /* ---------- The details: grid bergaris rambut 3×2 ---------- */
 
@@ -13,7 +15,7 @@ const DETAILS: { icon: Parameters<typeof Icon>[0]["name"]; title: string; body: 
   { icon: "history", title: "Nothing is final", body: "Every change, yours or the agent’s, lands in History — one click from restored." },
   { icon: "swatch", title: "Tokens & DTCG", body: "Variables with light and dark modes. Import and export design tokens in the DTCG format." },
   { icon: "listChecks", title: "Checks before you look", body: "layout_check flags layout and legibility problems before the agent says done." },
-  { icon: "terminal", title: "MCP over stdio", body: "npx lakar mcp. No plugin, no browser extension, no API key to paste." },
+  { icon: "terminal", title: "MCP over stdio", body: "Install in an agent from Settings → Connections. No plugin, no browser extension, no API key to paste." },
 ];
 
 export function Details() {
@@ -160,8 +162,7 @@ const QA: { q: string; a: ReactNode }[] = [
     q: "Which coding agents does it work with?",
     a: (
       <>
-        Anything that speaks MCP: Claude Code, Codex and ACP clients. Add <code className="font-mono text-[14px]">npx lakar mcp</code> as an MCP server and
-        the tools show up.
+        Claude Code, Codex, Pi, OpenCode and any other MCP client. Install from the app: Settings → Connections → Install in an agent.
       </>
     ),
   },
@@ -200,8 +201,8 @@ export function Faq() {
         <Reveal className="flex flex-col gap-[18px]">
           <h2 className="grad-head text-[38px] font-semibold md:text-[52px] xl:text-[60px]">Questions</h2>
           <p className="text-[15px] text-fg-2">
-            Anything else? Ask on{" "}
-            <a href={`${GITHUB_URL}/discussions`} className="text-fg underline underline-offset-2">GitHub Discussions</a>.
+            Anything else? Open an issue on{" "}
+            <a href={`${GITHUB_URL}/issues`} className="text-fg underline underline-offset-2">GitHub</a>.
           </p>
         </Reveal>
         <Reveal delay={80}>
@@ -253,9 +254,9 @@ export function Closing() {
       <Reveal className="relative mx-auto flex max-w-[900px] flex-col items-center gap-[26px] px-5 pt-28 pb-28 text-center md:pt-[150px] md:pb-[150px]">
         <Image src="/img/app-icon.png" alt="Lakar app icon" width={104} height={104} className="float drop-shadow-[0_12px_40px_#2563eb59]" />
         <h2 className="grad-head text-[40px] font-semibold md:text-[60px] xl:text-[72px]">Next time, just prompt it</h2>
-        <p className="text-[17px] text-fg-2 md:text-[18px]">Free for macOS, Windows and Linux.</p>
-        <Pill href={DOWNLOAD_URL} primary icon={<Icon name="download" />}>Download for Mac</Pill>
-        <p className="font-mono text-[13px] text-fg-3">or run&nbsp;&nbsp;npx lakar mcp</p>
+        <p className="text-[17px] text-fg-2 md:text-[18px]">Free, and your designs stay on your computer.</p>
+        <DownloadButton />
+        <div className="relative z-20"><DownloadMeta /></div>
       </Reveal>
     </section>
   );
@@ -264,9 +265,9 @@ export function Closing() {
 /* ---------- Footer ---------- */
 
 const COLS: { title: string; links: [string, string][] }[] = [
-  { title: "Lakar", links: [["How it works", "#how-it-works"], ["Lakar Cloud", "#cloud"], ["FAQ", "#faq"], ["Download", DOWNLOAD_URL]] },
-  { title: "Developers", links: [["GitHub", GITHUB_URL], ["Docs", `${GITHUB_URL}#readme`], ["MCP setup", "#faq"], ["Changelog", `${GITHUB_URL}/releases`]] },
-  { title: "More", links: [["Releases on GitHub", `${GITHUB_URL}/releases`], ["Privacy", "#cloud"], ["Terms", `${GITHUB_URL}/blob/main/LICENSE`]] },
+  { title: "Lakar", links: [["How it works", "#how-it-works"], ["Lakar Cloud", "#cloud"], ["FAQ", "#faq"], ["Download", `${RELEASES_URL}/latest`]] },
+  { title: "Developers", links: [["GitHub", GITHUB_URL], ["Docs", `${GITHUB_URL}#readme`], ["Changelog", RELEASES_URL], ["Issues", `${GITHUB_URL}/issues`]] },
+  { title: "More", links: [["Releases on GitHub", RELEASES_URL], ["Nightly builds", NIGHTLY_RELEASES_URL], ["Privacy", "#cloud"], ["Terms", `${GITHUB_URL}/blob/main/LICENSE`]] },
 ];
 
 export function Footer() {
